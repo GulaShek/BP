@@ -20,9 +20,13 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.RadioGroup.OnCheckedChangeListener;
+
 
 import java.util.Random;
 
@@ -30,7 +34,7 @@ import javax.security.auth.callback.Callback;
 
 
 
-public class MainActivity extends Activity implements Callback{
+public class MainActivity extends Activity {
 
 
 
@@ -63,6 +67,7 @@ public class MainActivity extends Activity implements Callback{
     int selectedColorRGB;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -71,6 +76,8 @@ public class MainActivity extends Activity implements Callback{
         //getSupportActionBar().hide();//skryje vrchní lištu
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR); //zabrání změnám orientace
         initComopnents();
+
+
 
         btnDeleteTurtle.setOnClickListener(new Button.OnClickListener() {
 
@@ -267,6 +274,7 @@ public class MainActivity extends Activity implements Callback{
                 final ColorPicker cp = new ColorPicker(MainActivity.this, defaultColorR, defaultColorG, defaultColorB);
 
                 cp.show();
+
 
 /* On Click listener for the dialog, when the user select the color */
                 Button okColor = (Button)cp.findViewById(R.id.okColorButton);
