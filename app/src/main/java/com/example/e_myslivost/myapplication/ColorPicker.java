@@ -119,6 +119,7 @@ public class ColorPicker extends Dialog implements SeekBar.OnSeekBarChangeListen
         blueToolTip = (TextView)findViewById(R.id.blueToolTip);
 
         codHex = (EditText)findViewById(R.id.codHex);
+        codHex.setKeyListener(null);
 
         redSeekBar.setOnSeekBarChangeListener(this);
         greenSeekBar.setOnSeekBarChangeListener(this);

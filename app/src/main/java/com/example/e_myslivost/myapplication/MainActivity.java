@@ -43,7 +43,7 @@ public class MainActivity extends Activity implements Callback{
     private EditText editText3;
     private EditText editText4;
     private Button btnNewTurtle;
-    private Button btnClearCanvas;
+    private Button btnDeleteTurtle;
     private Button btnForward;
     private Button btnBackward;
     private Button btnClouseApp;
@@ -52,9 +52,8 @@ public class MainActivity extends Activity implements Callback{
     private SurfaceHolder sth;
     private Turtle turtle;
     Canvas canvas;
-    Thread thread = null;
-    boolean canDraw = false;
-    Bitmap  tempCanvasBitmap;
+
+    //proměnné pro colorPicker
     int defaultColorR =0;
     int defaultColorG = 0;
     int defaultColorB = 0;
@@ -73,19 +72,12 @@ public class MainActivity extends Activity implements Callback{
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR); //zabrání změnám orientace
         initComopnents();
 
-        btnClearCanvas.setOnClickListener(new Button.OnClickListener() {
+        btnDeleteTurtle.setOnClickListener(new Button.OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
-                canvas = sth.lockCanvas();
-
-                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                paint.setStyle(Paint.Style.FILL);
-                paint.setStrokeWidth(5);
-                paint.setColor(Color.GREEN);
-                //canvas.drawCircle(canvas.getWidth() / 2, canvas.getHeight() / 2, 25, paint);
-                sth.unlockCanvasAndPost(canvas);
+                turtle = null;
             }
         });
 
@@ -93,6 +85,7 @@ public class MainActivity extends Activity implements Callback{
 
             @Override
             public void onClick(View v) {
+                if(turtle != null){
                 if (sth.getSurface().isValid()) {
                     int x = 0;
                     int y = 0;
@@ -157,6 +150,10 @@ public class MainActivity extends Activity implements Callback{
                     editText4.setText("X:" + x + "Y:" + y + "tX:" + turtle.getX() + "tY:" + turtle.getY());
                     sth.unlockCanvasAndPost(canvas);
                 }
+            }else
+            {
+                Toast.makeText(getApplicationContext(), "Nemáte vytvořenou želvu!", Toast.LENGTH_LONG).show();
+            }
             }
         });
 
@@ -165,7 +162,7 @@ public class MainActivity extends Activity implements Callback{
             @Override
             public void onClick(View v) {
 
-
+                if(turtle != null){
                 if (sth.getSurface().isValid()) {
                     int x = 0;
                     int y = 0;
@@ -227,9 +224,13 @@ public class MainActivity extends Activity implements Callback{
                     turtle.setY(y);
                     editText4.setText("X:" + x + "Y:" + y + "tX:" + turtle.getX() + "tY:" + turtle.getY());
                     sth.unlockCanvasAndPost(canvas);
-
-
                 }
+                }else
+                {
+                    Toast.makeText(getApplicationContext(), "Nemáte vytvořenou želvu!", Toast.LENGTH_LONG).show();
+                }
+
+
             }
         });
 
@@ -414,7 +415,7 @@ public class MainActivity extends Activity implements Callback{
         //Buttny
         btnNewTurtle = (Button) findViewById(R.id.button);
         btnForward = (Button) findViewById(R.id.button5);
-        btnClearCanvas = (Button) findViewById(R.id.button2);
+        btnDeleteTurtle = (Button) findViewById(R.id.button2);
         btnClouseApp = (Button) findViewById(R.id.button8);
         btnBackward = (Button) findViewById(R.id.button4);
         btnPickColour = (Button) findViewById(R.id.button9);

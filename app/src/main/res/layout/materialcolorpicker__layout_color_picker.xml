@@ -3,19 +3,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ColorPickerActivity">
 
     <View
         android:layout_width="fill_parent"
-        android:layout_height="150dp"
+        android:layout_height="2dp"
         android:id="@+id/colorView"
         android:elevation="2dp" />
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:background="@android:color/white"
         android:paddingLeft="@dimen/materialcolorpicker__activity_horizontal_margin"
         android:paddingRight="@dimen/materialcolorpicker__activity_horizontal_margin"
@@ -103,7 +103,8 @@
             android:imeOptions="actionDone|actionGo|actionSend"
             android:maxLines="1"
             android:singleLine="true"
-            android:layout_alignParentLeft="true" />
+            android:layout_alignParentLeft="true"
+            />
 
         <Button
             android:layout_width="wrap_content"
@@ -123,10 +124,10 @@
             android:id="@+id/textView"
             android:layout_alignEnd="@+id/codHex"
             android:layout_alignParentStart="true"
-            android:layout_alignBaseline="@+id/codHex" />
+            android:layout_alignBaseline="@+id/codHex"
+            android:editable="false" />
 
     </RelativeLayout>
-
 
 
 </LinearLayout>
