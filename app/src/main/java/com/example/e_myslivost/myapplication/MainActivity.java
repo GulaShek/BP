@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -28,7 +29,9 @@ import java.util.Random;
 import javax.security.auth.callback.Callback;
 
 
-public class MainActivity extends Activity{
+
+public class MainActivity extends Activity implements Callback{
+
 
 
 
@@ -44,10 +47,21 @@ public class MainActivity extends Activity{
     private Button btnForward;
     private Button btnBackward;
     private Button btnClouseApp;
+    private Button btnPickColour;
     private SurfaceView srf;
     private SurfaceHolder sth;
     private Turtle turtle;
-    private Canvas canvas;
+    Canvas canvas;
+    Thread thread = null;
+    boolean canDraw = false;
+    Bitmap  tempCanvasBitmap;
+    int defaultColorR =0;
+    int defaultColorG = 0;
+    int defaultColorB = 0;
+    int selectedColorR;
+    int selectedColorG;
+    int selectedColorB;
+    int selectedColorRGB;
 
 
     @Override
@@ -82,6 +96,7 @@ public class MainActivity extends Activity{
                 if (sth.getSurface().isValid()) {
                     int x = 0;
                     int y = 0;
+
                     canvas = sth.lockCanvas();
 
                     //textView.setText("Vpřed:");
@@ -90,7 +105,7 @@ public class MainActivity extends Activity{
                     paint.setStyle(Paint.Style.FILL);
                     paint.setStrokeWidth(5);
                     int delka = seekBar.getProgress();
-                    paint.setColor(Color.GREEN);
+                    paint.setColor(turtle.getColor());
                     if (turtle.getAngle() > 0 && turtle.getAngle() < 90) {
                         x = (int) (turtle.getX() + delka * Math.cos(Math.toRadians(turtle.getAngle())));
                         y = (int) (turtle.getY() - delka * Math.sin(Math.toRadians(turtle.getAngle())));
@@ -128,10 +143,18 @@ public class MainActivity extends Activity{
 
 
                     canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+
+                    sth.unlockCanvasAndPost(canvas);
+
+                    canvas = sth.lockCanvas();
+                    canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                    sth.unlockCanvasAndPost(canvas);
+
+                    canvas = sth.lockCanvas();
+                    canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
                     turtle.setX(x);
                     turtle.setY(y);
                     editText4.setText("X:" + x + "Y:" + y + "tX:" + turtle.getX() + "tY:" + turtle.getY());
-
                     sth.unlockCanvasAndPost(canvas);
                 }
             }
@@ -142,18 +165,21 @@ public class MainActivity extends Activity{
             @Override
             public void onClick(View v) {
 
+
                 if (sth.getSurface().isValid()) {
                     int x = 0;
                     int y = 0;
-                    canvas = sth.lockCanvas();
+
                     srf.setBackgroundColor(0xd7d5d5);
-                    //textView.setText("Vpřed:");
+                    srf.setZOrderOnTop(true);
+                    srf.getHolder().setFormat(PixelFormat.TRANSPARENT);
+                    canvas = sth.lockCanvas();
                     //... actual drawing on canvas
                     Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
                     paint.setStyle(Paint.Style.FILL);
                     paint.setStrokeWidth(5);
                     int delka = seekBar2.getProgress();
-                    paint.setColor(Color.GREEN);
+                    paint.setColor(turtle.getColor());
                     if (turtle.getAngle() > 0 && turtle.getAngle() < 90) {
                         x = (int) (turtle.getX() - delka * Math.cos(Math.toRadians(turtle.getAngle())));
                         y = (int) (turtle.getY() + delka * Math.sin(Math.toRadians(turtle.getAngle())));
@@ -188,13 +214,18 @@ public class MainActivity extends Activity{
                         x = turtle.getX() - delka;
                         y = turtle.getY();
                     }
+                    canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                    sth.unlockCanvasAndPost(canvas);
 
+                    canvas = sth.lockCanvas();
+                    canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                    sth.unlockCanvasAndPost(canvas);
 
+                    canvas = sth.lockCanvas();
                     canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
                     turtle.setX(x);
                     turtle.setY(y);
                     editText4.setText("X:" + x + "Y:" + y + "tX:" + turtle.getX() + "tY:" + turtle.getY());
-
                     sth.unlockCanvasAndPost(canvas);
 
 
@@ -225,6 +256,44 @@ public class MainActivity extends Activity{
                     sth.unlockCanvasAndPost(canvas);
                 }
 
+            }
+        });
+
+        btnPickColour.setOnClickListener(new Button.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                final ColorPicker cp = new ColorPicker(MainActivity.this, defaultColorR, defaultColorG, defaultColorB);
+
+                cp.show();
+
+/* On Click listener for the dialog, when the user select the color */
+                Button okColor = (Button)cp.findViewById(R.id.okColorButton);
+
+                okColor.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+        /* You can get single channel (value 0-255) */
+                        selectedColorR = cp.getRed();
+                        selectedColorG = cp.getGreen();
+                        selectedColorB = cp.getBlue();
+
+        /* Or the android RGB Color (see the android Color class reference) */
+                        selectedColorRGB = cp.getColor();
+
+                        cp.dismiss();
+                        btnPickColour.setBackgroundColor(selectedColorRGB);
+                        if(turtle != null)
+                        {
+                            turtle.setColor(selectedColorRGB);
+                        }else
+                        {
+                            Toast.makeText(getApplicationContext(), "Nemáte vytvořenou želvu!", Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                });
             }
         });
         btnClouseApp.setOnClickListener(new Button.OnClickListener() {
@@ -314,6 +383,7 @@ public class MainActivity extends Activity{
 
         });
 
+
     }
 
 
@@ -347,14 +417,16 @@ public class MainActivity extends Activity{
         btnClearCanvas = (Button) findViewById(R.id.button2);
         btnClouseApp = (Button) findViewById(R.id.button8);
         btnBackward = (Button) findViewById(R.id.button4);
+        btnPickColour = (Button) findViewById(R.id.button9);
 
 
         //Ostatní
         srf = (SurfaceView) findViewById(R.id.surfaceView);
         sth = srf.getHolder();
 
+
+
+
     }
-
-
 
 }
