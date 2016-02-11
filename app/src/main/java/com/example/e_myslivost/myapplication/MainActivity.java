@@ -1,37 +1,25 @@
 package com.example.e_myslivost.myapplication;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Picture;
 import android.graphics.PixelFormat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.RadioGroup;
+import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 
+import com.triggertrap.seekarc.SeekArc;
 
-import java.util.Random;
-
-import javax.security.auth.callback.Callback;
-
+import org.w3c.dom.Text;
 
 
 public class MainActivity extends Activity {
@@ -41,11 +29,11 @@ public class MainActivity extends Activity {
 
     private SeekBar seekBar;
     private SeekBar seekBar2;
-    private SeekBar seekBar3;
+    private SeekArc seekBarArc;
     private EditText editText;
     private EditText editText2;
-    private EditText editText3;
     private EditText editText4;
+    private TextView seekArcProgress;
     private Button btnNewTurtle;
     private Button btnDeleteTurtle;
     private Button btnForward;
@@ -54,6 +42,7 @@ public class MainActivity extends Activity {
     private Button btnPickColour;
     private SurfaceView srf;
     private SurfaceHolder sth;
+    private NumberPicker numberPicker;
     private Turtle turtle;
     Canvas canvas;
 
@@ -104,43 +93,11 @@ public class MainActivity extends Activity {
                     Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
                     paint.setStyle(Paint.Style.FILL);
                     paint.setStrokeWidth(5);
-                    int delka = seekBar.getProgress();
+                    int distance = seekBar.getProgress();
                     paint.setColor(turtle.getColor());
-                    if (turtle.getAngle() > 0 && turtle.getAngle() < 90) {
-                        x = (int) (turtle.getX() + delka * Math.cos(Math.toRadians(turtle.getAngle())));
-                        y = (int) (turtle.getY() - delka * Math.sin(Math.toRadians(turtle.getAngle())));
-                        editText4.setText("blok1 ");
-                    }
-                    if (turtle.getAngle() == 90) {
-                        x = turtle.getX();
-                        y = turtle.getY() - delka;
-                    }
-                    if (turtle.getAngle() > 90 && turtle.getAngle() < 180) {
-                        x = (int) (turtle.getX() - delka * Math.sin(Math.toRadians(turtle.getAngle() - 90)));
-                        y = (int) (turtle.getY() - delka * Math.cos(Math.toRadians(turtle.getAngle() - 90)));
-                        editText4.setText("blok2");
-                    }
-                    if (turtle.getAngle() == 180) {
-                        x = turtle.getX() - delka;
-                        y = turtle.getY();
-                    }
-                    if (turtle.getAngle() > 180 && turtle.getAngle() < 270) {
-                        x = (int) (turtle.getX() - delka * Math.cos(Math.toRadians(turtle.getAngle() - 180)));
-                        y = (int) (turtle.getY() + delka * Math.sin(Math.toRadians(turtle.getAngle() - 180)));
-                    }
-                    if (turtle.getAngle() == 270) {
-                        x = turtle.getX();
-                        y = turtle.getY() + delka;
-                    }
-                    if (turtle.getAngle() > 270 && turtle.getAngle() < 360) {
-                        x = (int) (turtle.getX() + delka * Math.sin(Math.toRadians(turtle.getAngle() - 270)));
-                        y = (int) (turtle.getY() + delka * Math.cos(Math.toRadians(turtle.getAngle() - 270)));
-                    }
-                    if (turtle.getAngle() == 360 || turtle.getAngle() == 0) {
-                        x = turtle.getX() + delka;
-                        y = turtle.getY();
-                    }
 
+                    x = turtle.getNewXForeward(distance,turtle);
+                    y = turtle.getNewYForeward(distance,turtle);
 
                     canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
 
@@ -173,51 +130,15 @@ public class MainActivity extends Activity {
                 if (sth.getSurface().isValid()) {
                     int x = 0;
                     int y = 0;
-
-                    srf.setBackgroundColor(0xd7d5d5);
-                    srf.setZOrderOnTop(true);
-                    srf.getHolder().setFormat(PixelFormat.TRANSPARENT);
                     canvas = sth.lockCanvas();
                     //... actual drawing on canvas
                     Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
                     paint.setStyle(Paint.Style.FILL);
                     paint.setStrokeWidth(5);
-                    int delka = seekBar2.getProgress();
+                    int distance = seekBar2.getProgress();
                     paint.setColor(turtle.getColor());
-                    if (turtle.getAngle() > 0 && turtle.getAngle() < 90) {
-                        x = (int) (turtle.getX() - delka * Math.cos(Math.toRadians(turtle.getAngle())));
-                        y = (int) (turtle.getY() + delka * Math.sin(Math.toRadians(turtle.getAngle())));
-
-                    }
-                    if (turtle.getAngle() == 90) {
-                        x = turtle.getX();
-                        y = turtle.getY() + delka;
-                    }
-                    if (turtle.getAngle() > 90 && turtle.getAngle() < 180) {
-                        x = (int) (turtle.getX() + delka * Math.sin(Math.toRadians(turtle.getAngle() - 90)));
-                        y = (int) (turtle.getY() + delka * Math.cos(Math.toRadians(turtle.getAngle() - 90)));
-
-                    }
-                    if (turtle.getAngle() == 180) {
-                        x = turtle.getX() + delka;
-                        y = turtle.getY();
-                    }
-                    if (turtle.getAngle() > 180 && turtle.getAngle() < 270) {
-                        x = (int) (turtle.getX() + delka * Math.cos(Math.toRadians(turtle.getAngle() - 180)));
-                        y = (int) (turtle.getY() - delka * Math.sin(Math.toRadians(turtle.getAngle() - 180)));
-                    }
-                    if (turtle.getAngle() == 270) {
-                        x = turtle.getX();
-                        y = turtle.getY() - delka;
-                    }
-                    if (turtle.getAngle() > 270 && turtle.getAngle() < 360) {
-                        x = (int) (turtle.getX() - delka * Math.sin(Math.toRadians(turtle.getAngle() - 270)));
-                        y = (int) (turtle.getY() - delka * Math.cos(Math.toRadians(turtle.getAngle() - 270)));
-                    }
-                    if (turtle.getAngle() == 360 || turtle.getAngle() == 0) {
-                        x = turtle.getX() - delka;
-                        y = turtle.getY();
-                    }
+                    x = turtle.getNewXBackward(distance, turtle);
+                    y = turtle.getNewYBackward(distance, turtle);
                     canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
                     sth.unlockCanvasAndPost(canvas);
 
@@ -276,28 +197,26 @@ public class MainActivity extends Activity {
                 cp.show();
 
 
-/* On Click listener for the dialog, when the user select the color */
-                Button okColor = (Button)cp.findViewById(R.id.okColorButton);
+                /* On Click listener for the dialog, when the user select the color */
+                Button okColor = (Button) cp.findViewById(R.id.okColorButton);
 
                 okColor.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-        /* You can get single channel (value 0-255) */
+                 /* You can get single channel (value 0-255) */
                         selectedColorR = cp.getRed();
                         selectedColorG = cp.getGreen();
                         selectedColorB = cp.getBlue();
 
-        /* Or the android RGB Color (see the android Color class reference) */
+                        /* Or the android RGB Color (see the android Color class reference) */
                         selectedColorRGB = cp.getColor();
 
                         cp.dismiss();
                         btnPickColour.setBackgroundColor(selectedColorRGB);
-                        if(turtle != null)
-                        {
+                        if (turtle != null) {
                             turtle.setColor(selectedColorRGB);
-                        }else
-                        {
+                        } else {
                             Toast.makeText(getApplicationContext(), "Nemáte vytvořenou želvu!", Toast.LENGTH_LONG).show();
                         }
 
@@ -363,34 +282,36 @@ public class MainActivity extends Activity {
             }
 
         });
-
-        seekBar3.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int progress = 0;
-
-
+        seekBarArc.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
-
-                editText3.setText("" + seekBar3.getProgress());
+            public void onProgressChanged(SeekArc seekArc, int i, boolean b) {
+                seekArcProgress.setText("" + seekArc.getProgress());
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(SeekArc seekArc) {
 
             }
 
-
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-                editText3.setText("" + seekBar3.getProgress());
+            public void onStopTrackingTouch(SeekArc seekArc) {
+                seekArcProgress.setText("" + seekArc.getProgress());
                 if (turtle != null) {
-                    turtle.setAngle(seekBar3.getProgress());
-                    editText3.setText("" + seekBar3.getProgress() + " v:" + turtle.getAngle());
+                    turtle.setAngle(seekArc.getProgress());
                 }
             }
+        }) ;
 
+
+        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener()
+        {
+            public void onValueChange(NumberPicker picker, int oldVal,
+                                      int newVal)
+            {
+                numberPicker.setValue(newVal);
+            }
         });
+
 
 
     }
@@ -410,15 +331,15 @@ public class MainActivity extends Activity {
         //SeekBary
         seekBar = (SeekBar) findViewById(R.id.seekBar);
         seekBar2 = (SeekBar) findViewById(R.id.seekBar2);
-        seekBar3 = (SeekBar) findViewById(R.id.seekBar3);
+        seekBarArc = (SeekArc) findViewById(R.id.seekArc);
         //Textové pole
         editText = (EditText) findViewById(R.id.editText);
         editText.setKeyListener(null);
         editText2 = (EditText) findViewById(R.id.editText2);
         editText2.setKeyListener(null);
-        editText3 = (EditText) findViewById(R.id.editText3);
-        editText3.setKeyListener(null);
         editText4 = (EditText) findViewById(R.id.editText4);
+        seekArcProgress = (TextView) findViewById(R.id.seekArcProgress);
+        seekArcProgress.setKeyListener(null);
 
         //Buttny
         btnNewTurtle = (Button) findViewById(R.id.button);
@@ -430,6 +351,7 @@ public class MainActivity extends Activity {
 
 
         //Ostatní
+        numberPicker = (NumberPicker) findViewById(R.id.numberPicker);
         srf = (SurfaceView) findViewById(R.id.surfaceView);
         sth = srf.getHolder();
 

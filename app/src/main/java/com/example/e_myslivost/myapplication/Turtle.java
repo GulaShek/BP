@@ -71,13 +71,136 @@ public class Turtle {
         this.angle = angle;
     }
 
-    public void forward(int distance)
+    public int getNewXBackward(int delka, Turtle turtle)
     {
+        int newX = 0;
+        if (turtle.getAngle() > 0 && turtle.getAngle() < 90) {
+            newX = (int) (turtle.getX() - delka * Math.cos(Math.toRadians(turtle.getAngle())));
 
+        }
+        if (turtle.getAngle() == 90) {
+            newX = turtle.getX();
+        }
+        if (turtle.getAngle() > 90 && turtle.getAngle() < 180) {
+            newX = (int) (turtle.getX() + delka * Math.sin(Math.toRadians(turtle.getAngle() - 90)));
+
+        }
+        if (turtle.getAngle() == 180) {
+            newX = turtle.getX() + delka;
+        }
+        if (turtle.getAngle() > 180 && turtle.getAngle() < 270) {
+            newX = (int) (turtle.getX() + delka * Math.cos(Math.toRadians(turtle.getAngle() - 180)));
+
+        }
+        if (turtle.getAngle() == 270) {
+            newX = turtle.getX();
+        }
+        if (turtle.getAngle() > 270 && turtle.getAngle() < 360) {
+            newX = (int) (turtle.getX() - delka * Math.sin(Math.toRadians(turtle.getAngle() - 270)));
+        }
+        if (turtle.getAngle() == 360 || turtle.getAngle() == 0) {
+            newX = turtle.getX() - delka;
+        }
+
+        return newX;
     }
-    public void back(int distance)
+    public int getNewYBackward(int delka, Turtle turtle)
     {
 
+        int newY = 0;
+        if (turtle.getAngle() > 0 && turtle.getAngle() < 90) {
+            newY = (int) (turtle.getY() - delka * Math.sin(Math.toRadians(turtle.getAngle())));
+
+        }
+        if (turtle.getAngle() == 90) {
+            newY = turtle.getY() - delka;
+        }
+        if (turtle.getAngle() > 90 && turtle.getAngle() < 180) {
+            newY = (int) (turtle.getY() - delka * Math.cos(Math.toRadians(turtle.getAngle() - 90)));
+
+        }
+        if (turtle.getAngle() == 180) {
+            newY = turtle.getY();
+        }
+        if (turtle.getAngle() > 180 && turtle.getAngle() < 270) {
+            newY = (int) (turtle.getY() + delka * Math.sin(Math.toRadians(turtle.getAngle() - 180)));
+        }
+        if (turtle.getAngle() == 270) {
+            newY = turtle.getY() + delka;
+        }
+        if (turtle.getAngle() > 270 && turtle.getAngle() < 360) {
+            newY = (int) (turtle.getY() + delka * Math.cos(Math.toRadians(turtle.getAngle() - 270)));
+        }
+        if (turtle.getAngle() == 360 || turtle.getAngle() == 0) {
+            newY = turtle.getY();
+        }
+
+        return newY;
+    }
+    public int getNewXForeward(int delka, Turtle turtle)
+    {
+        int newX = 0;
+        if (turtle.getAngle() > 0 && turtle.getAngle() < 90) {
+            newX = (int) (turtle.getX() + delka * Math.cos(Math.toRadians(turtle.getAngle())));
+        }
+        if (turtle.getAngle() == 90) {
+            newX = turtle.getX();
+        }
+        if (turtle.getAngle() > 90 && turtle.getAngle() < 180) {
+            newX = (int) (turtle.getX() - delka * Math.sin(Math.toRadians(turtle.getAngle() - 90)));
+
+        }
+        if (turtle.getAngle() == 180) {
+            newX = turtle.getX() - delka;
+        }
+        if (turtle.getAngle() > 180 && turtle.getAngle() < 270) {
+            newX = (int) (turtle.getX() - delka * Math.cos(Math.toRadians(turtle.getAngle() - 180)));
+        }
+        if (turtle.getAngle() == 270) {
+            newX = turtle.getX();
+        }
+        if (turtle.getAngle() > 270 && turtle.getAngle() < 360) {
+            newX = (int) (turtle.getX() + delka * Math.sin(Math.toRadians(turtle.getAngle() - 270)));
+        }
+        if (turtle.getAngle() == 360 || turtle.getAngle() == 0) {
+            newX = turtle.getX() + delka;
+        }
+
+        return newX;
+    }
+    public int getNewYForeward(int delka, Turtle turtle)
+    {
+
+        int newY = 0;
+        if (turtle.getAngle() > 0 && turtle.getAngle() < 90) {
+
+            newY = (int) (turtle.getY() + delka * Math.sin(Math.toRadians(turtle.getAngle())));
+        }
+        if (turtle.getAngle() == 90) {
+
+            newY = turtle.getY() + delka;
+        }
+        if (turtle.getAngle() > 90 && turtle.getAngle() < 180) {
+            newY = (int) (turtle.getY() + delka * Math.cos(Math.toRadians(turtle.getAngle() - 90)));
+
+        }
+        if (turtle.getAngle() == 180) {
+            newY = turtle.getY();
+        }
+        if (turtle.getAngle() > 180 && turtle.getAngle() < 270) {
+            newY = (int) (turtle.getY() - delka * Math.sin(Math.toRadians(turtle.getAngle() - 180)));
+        }
+        if (turtle.getAngle() == 270) {
+            newY = turtle.getY() - delka;
+        }
+        if (turtle.getAngle() > 270 && turtle.getAngle() < 360) {
+            newY = (int) (turtle.getY() - delka * Math.cos(Math.toRadians(turtle.getAngle() - 270)));
+        }
+        if (turtle.getAngle() == 360 || turtle.getAngle() == 0) {
+            newY = turtle.getY();
+        }
+
+        return newY;
     }
     public void turn(int angle)
     {
