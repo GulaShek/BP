@@ -6,20 +6,31 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.triggertrap.seekarc.SeekArc;
+import com.vi.swipenumberpicker.OnValueChangeListener;
+import com.vi.swipenumberpicker.SwipeNumberPicker;
 
 import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class MainActivity extends Activity {
@@ -40,11 +51,19 @@ public class MainActivity extends Activity {
     private Button btnBackward;
     private Button btnClouseApp;
     private Button btnPickColour;
+    private Button btnIteration;
     private SurfaceView srf;
     private SurfaceHolder sth;
-    private NumberPicker numberPicker;
+    private SwipeNumberPicker swipeNumberPicker;
+    private Switch switchColor;
     private Turtle turtle;
     Canvas canvas;
+
+    //listView
+    private ListView listView;
+    private ArrayAdapter<String> listAdapter ;
+    String[] commands = new String[] {};
+    ArrayList<String> commandList = new ArrayList<String>();
 
     //proměnné pro colorPicker
     int defaultColorR =0;
@@ -58,15 +77,12 @@ public class MainActivity extends Activity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //getSupportActionBar().hide();//skryje vrchní lištu
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR); //zabrání změnám orientace
         initComopnents();
-
-
 
         btnDeleteTurtle.setOnClickListener(new Button.OnClickListener() {
 
@@ -87,8 +103,6 @@ public class MainActivity extends Activity {
                     int y = 0;
 
                     canvas = sth.lockCanvas();
-
-                    //textView.setText("Vpřed:");
                     //... actual drawing on canvas
                     Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
                     paint.setStyle(Paint.Style.FILL);
@@ -96,8 +110,8 @@ public class MainActivity extends Activity {
                     int distance = seekBar.getProgress();
                     paint.setColor(turtle.getColor());
 
-                    x = turtle.getNewXForeward(distance,turtle);
-                    y = turtle.getNewYForeward(distance,turtle);
+                    x = turtle.getNewXForeward(distance, turtle);
+                    y = turtle.getNewYForeward(distance, turtle);
 
                     canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
 
@@ -113,6 +127,8 @@ public class MainActivity extends Activity {
                     turtle.setY(y);
                     editText4.setText("X:" + x + "Y:" + y + "tX:" + turtle.getX() + "tY:" + turtle.getY());
                     sth.unlockCanvasAndPost(canvas);
+                    listAdapter.add("Vpřed " + distance);
+                    listView.setAdapter(listAdapter);
                 }
             }else
             {
@@ -152,6 +168,10 @@ public class MainActivity extends Activity {
                     turtle.setY(y);
                     editText4.setText("X:" + x + "Y:" + y + "tX:" + turtle.getX() + "tY:" + turtle.getY());
                     sth.unlockCanvasAndPost(canvas);
+
+                    listAdapter.add("Vzad " + distance);
+                    listView.setAdapter(listAdapter);
+
                 }
                 }else
                 {
@@ -216,6 +236,9 @@ public class MainActivity extends Activity {
                         btnPickColour.setBackgroundColor(selectedColorRGB);
                         if (turtle != null) {
                             turtle.setColor(selectedColorRGB);
+                            listAdapter.add("Nová barva ");
+                            listView.setAdapter(listAdapter);
+
                         } else {
                             Toast.makeText(getApplicationContext(), "Nemáte vytvořenou želvu!", Toast.LENGTH_LONG).show();
                         }
@@ -223,6 +246,17 @@ public class MainActivity extends Activity {
                     }
                 });
             }
+        });
+        btnIteration.setOnClickListener(new Button.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                commandList.add(0,"Opakovat " + swipeNumberPicker.getValue());
+                commandList.add(listAdapter.getCount(),"Konec opakování");
+                commandList.addAll(Arrays.asList(commands));
+                listView.setAdapter(listAdapter);
+            }
+
         });
         btnClouseApp.setOnClickListener(new Button.OnClickListener() {
 
@@ -298,19 +332,56 @@ public class MainActivity extends Activity {
                 seekArcProgress.setText("" + seekArc.getProgress());
                 if (turtle != null) {
                     turtle.setAngle(seekArc.getProgress());
+                    listAdapter.add("Otočit " + seekArc.getProgress());
+                    listView.setAdapter(listAdapter);
                 }
             }
         }) ;
 
 
-        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener()
-        {
-            public void onValueChange(NumberPicker picker, int oldVal,
-                                      int newVal)
-            {
-                numberPicker.setValue(newVal);
+        swipeNumberPicker.setOnValueChangeListener(new OnValueChangeListener() {
+            @Override
+            public boolean onValueChange(SwipeNumberPicker view, int oldValue, int newValue) {
+                boolean isValueOk = (newValue & 1) == 0;
+                if (newValue < 10 &&  newValue  > 0)
+                {
+                    isValueOk = true;
+                }else
+                {
+                    isValueOk = false;
+                    Toast.makeText(getApplicationContext(), "Minimální počet opakování je 1 - maximální 10!", Toast.LENGTH_LONG).show();
+                }
+
+
+                return isValueOk;
+            }
+
+        });
+
+        switchColor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
+
+                if (isChecked) {
+                    if(turtle != null)
+                    {
+                        listAdapter.add("Kreslení zapnuto");
+                        listView.setAdapter(listAdapter);
+                    }
+
+                } else {
+                    if(turtle != null)
+                    {
+                        listAdapter.add("Kreslení vypnuto");
+                        listView.setAdapter(listAdapter);
+                    }
+                }
+
             }
         });
+
 
 
 
@@ -332,6 +403,7 @@ public class MainActivity extends Activity {
         seekBar = (SeekBar) findViewById(R.id.seekBar);
         seekBar2 = (SeekBar) findViewById(R.id.seekBar2);
         seekBarArc = (SeekArc) findViewById(R.id.seekArc);
+
         //Textové pole
         editText = (EditText) findViewById(R.id.editText);
         editText.setKeyListener(null);
@@ -347,16 +419,21 @@ public class MainActivity extends Activity {
         btnDeleteTurtle = (Button) findViewById(R.id.button2);
         btnClouseApp = (Button) findViewById(R.id.button8);
         btnBackward = (Button) findViewById(R.id.button4);
+        btnIteration = (Button) findViewById(R.id.button7);
         btnPickColour = (Button) findViewById(R.id.button9);
 
 
         //Ostatní
-        numberPicker = (NumberPicker) findViewById(R.id.numberPicker);
+        swipeNumberPicker = (SwipeNumberPicker) findViewById(R.id.number_picker);
+        switchColor =  (Switch) findViewById(R.id.switch1);
         srf = (SurfaceView) findViewById(R.id.surfaceView);
         sth = srf.getHolder();
 
-
-
+        //Listview
+        listView = (ListView) findViewById(R.id.listView);
+        listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, commandList);
+        commandList.addAll( Arrays.asList(commands) );
+        listView.setAdapter( listAdapter );
 
     }
 
