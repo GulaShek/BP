@@ -98,38 +98,41 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if(turtle != null){
-                if (sth.getSurface().isValid()) {
-                    int x = 0;
-                    int y = 0;
+                    if (sth.getSurface().isValid()) {
+                        int distance = seekBar.getProgress();
+                        int x = 0;
+                        int y = 0;
 
-                    canvas = sth.lockCanvas();
-                    //... actual drawing on canvas
-                    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                    paint.setStyle(Paint.Style.FILL);
-                    paint.setStrokeWidth(5);
-                    int distance = seekBar.getProgress();
-                    paint.setColor(turtle.getColor());
+                        x = turtle.getNewXForeward(distance, turtle);
+                        y = turtle.getNewYForeward(distance, turtle);
+                        if(switchColor.isChecked())
+                        {
+                            canvas = sth.lockCanvas();
+                            //... actual drawing on canvas
+                            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                            paint.setStyle(Paint.Style.FILL);
+                                paint.setStrokeWidth(5);
 
-                    x = turtle.getNewXForeward(distance, turtle);
-                    y = turtle.getNewYForeward(distance, turtle);
+                            paint.setColor(turtle.getColor());
+                            canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
 
-                    canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                            sth.unlockCanvasAndPost(canvas);
 
-                    sth.unlockCanvasAndPost(canvas);
+                            canvas = sth.lockCanvas();
+                                canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                            sth.unlockCanvasAndPost(canvas);
 
-                    canvas = sth.lockCanvas();
-                    canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
-                    sth.unlockCanvasAndPost(canvas);
+                            canvas = sth.lockCanvas();
+                                canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
 
-                    canvas = sth.lockCanvas();
-                    canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
-                    turtle.setX(x);
-                    turtle.setY(y);
-                    editText4.setText("X:" + x + "Y:" + y + "tX:" + turtle.getX() + "tY:" + turtle.getY());
-                    sth.unlockCanvasAndPost(canvas);
-                    listAdapter.add("Vpřed " + distance);
-                    listView.setAdapter(listAdapter);
-                }
+                                editText4.setText("X:" + x + "Y:" + y + "tX:" + turtle.getX() + "tY:" + turtle.getY());
+                            sth.unlockCanvasAndPost(canvas);
+                        }
+                        turtle.setX(x);
+                        turtle.setY(y);
+                        listAdapter.add("Vpřed " + distance);
+                        listView.setAdapter(listAdapter);
+                        }
             }else
             {
                 Toast.makeText(getApplicationContext(), "Nemáte vytvořenou želvu!", Toast.LENGTH_LONG).show();
@@ -146,28 +149,35 @@ public class MainActivity extends Activity {
                 if (sth.getSurface().isValid()) {
                     int x = 0;
                     int y = 0;
-                    canvas = sth.lockCanvas();
-                    //... actual drawing on canvas
-                    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                    paint.setStyle(Paint.Style.FILL);
-                    paint.setStrokeWidth(5);
                     int distance = seekBar2.getProgress();
-                    paint.setColor(turtle.getColor());
                     x = turtle.getNewXBackward(distance, turtle);
                     y = turtle.getNewYBackward(distance, turtle);
-                    canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
-                    sth.unlockCanvasAndPost(canvas);
 
-                    canvas = sth.lockCanvas();
-                    canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
-                    sth.unlockCanvasAndPost(canvas);
+                    if(switchColor.isChecked()) {
 
-                    canvas = sth.lockCanvas();
-                    canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                        canvas = sth.lockCanvas();
+                        //... actual drawing on canvas
+                        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                        paint.setStyle(Paint.Style.FILL);
+                        paint.setStrokeWidth(5);
+
+                        paint.setColor(turtle.getColor());
+
+                        canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                        sth.unlockCanvasAndPost(canvas);
+
+                        canvas = sth.lockCanvas();
+                        canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                        sth.unlockCanvasAndPost(canvas);
+
+                        canvas = sth.lockCanvas();
+                        canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                        editText4.setText("X:" + x + "Y:" + y + "tX:" + turtle.getX() + "tY:" + turtle.getY());
+                        sth.unlockCanvasAndPost(canvas);
+                    }
                     turtle.setX(x);
                     turtle.setY(y);
-                    editText4.setText("X:" + x + "Y:" + y + "tX:" + turtle.getX() + "tY:" + turtle.getY());
-                    sth.unlockCanvasAndPost(canvas);
+
 
                     listAdapter.add("Vzad " + distance);
                     listView.setAdapter(listAdapter);
