@@ -137,7 +137,7 @@ public class Turtle {
 
         return newY;
     }
-    public int getNewXForeward(int delka, Turtle turtle)
+    public int getNewXForward(int delka, Turtle turtle)
     {
         int newX = 0;
         if (turtle.getAngle() > 0 && turtle.getAngle() < 90) {
@@ -168,7 +168,7 @@ public class Turtle {
 
         return newX;
     }
-    public int getNewYForeward(int delka, Turtle turtle)
+    public int getNewYForward(int delka, Turtle turtle)
     {
 
         int newY = 0;
