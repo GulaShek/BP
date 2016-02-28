@@ -59,6 +59,7 @@ public class CreateProcedure extends Dialog
     int selectedColorRGB;
 
     Activity c;
+    ArrayList<Commands> listOfCommands = new ArrayList<Commands>();
 
 
     public CreateProcedure(Activity a) {
@@ -82,6 +83,8 @@ public class CreateProcedure extends Dialog
 
                 listAdapter2.add("Vpřed " + sbProcedureForward.getProgress());
                 listViewProcedure.setAdapter(listAdapter2);
+                Commands f = new Commands(1,"Vpřed",sbProcedureForward.getProgress());
+                listOfCommands.add(f);
 
             }
         });
@@ -116,6 +119,8 @@ public class CreateProcedure extends Dialog
 
                 listAdapter2.add("Vzad " + sbProcedureBackward.getProgress());
                 listViewProcedure.setAdapter(listAdapter2);
+                Commands f = new Commands(2,"Vzad",sbProcedureBackward.getProgress());
+                listOfCommands.add(f);
 
             }
         });
@@ -160,6 +165,8 @@ public class CreateProcedure extends Dialog
 
                 listAdapter2.add("Otočit " + seekArc.getProgress());
                 listViewProcedure.setAdapter(listAdapter2);
+                Commands c = new Commands(3,"Otočit",seekArc.getProgress());
+                listOfCommands.add(c);
 
             }
         }) ;
@@ -172,6 +179,11 @@ public class CreateProcedure extends Dialog
                 commandList.add(listAdapter2.getCount(), "Konec opakování");
                 commandList.addAll(Arrays.asList(commands));
                 listViewProcedure.setAdapter(listAdapter2);
+                Commands c = new Commands(6,"Opakuj",numbPickProcedure.getValue());
+                listOfCommands.add(0, c);
+                Commands c2 = new Commands(7,"konec Opakování");
+                listOfCommands.add(listOfCommands.size(), c2);
+
             }
 
         });
@@ -222,6 +234,8 @@ public class CreateProcedure extends Dialog
                         listAdapter2.add("Nová barva ");
                         listViewProcedure.setAdapter(listAdapter2);
                         btnProcedurePickColour.setBackgroundColor(selectedColorRGB);
+                        Commands f = new Commands(4,"Změna barvy",selectedColorRGB);
+                        listOfCommands.add(f);
 
                     }
                 });
@@ -238,12 +252,16 @@ public class CreateProcedure extends Dialog
 
                         listAdapter2.add("Kreslení zapnuto");
                         listViewProcedure.setAdapter(listAdapter2);
+                        Commands c = new Commands(5,"Kresleni",1);
+                        listOfCommands.add(c);
 
 
                 } else {
 
                         listAdapter2.add("Kreslení vypnuto");
                         listViewProcedure.setAdapter(listAdapter2);
+                        Commands c = new Commands(5,"Kresleni",0);
+                        listOfCommands.add(c);
 
                 }
 

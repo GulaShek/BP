@@ -25,6 +25,8 @@ public class ChooseProcedure extends Dialog
     private Button btnProcedureChooseClose;
     private Button btnProcedureChoose;
     public ListView listViewChooseProcedure;
+    public String chooseItem;
+    public Procedure chooseProcedure;
 
     Activity c;
     ArrayList<Procedure> listOfProcedure = new ArrayList<Procedure>();
@@ -66,6 +68,8 @@ public class ChooseProcedure extends Dialog
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // When clicked, show a toast with the TextView text or do whatever you need.
                 Toast.makeText(getContext(), ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+                chooseItem = (String)((TextView) view).getText();
+                chooseProcedure = listOfProcedure.get(position);
                 listViewChooseProcedure.setItemChecked(position,true);
             }
         });
@@ -73,6 +77,8 @@ public class ChooseProcedure extends Dialog
 
 
     }
+
+
 
 
 

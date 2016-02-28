@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
+
 public class MainActivity extends Activity {
 
 
@@ -41,7 +42,6 @@ public class MainActivity extends Activity {
     private SeekArc seekBarArc;
     private EditText editText;
     private EditText editText2;
-    private EditText editText4;
     private TextView seekArcProgress;
     private Button btnNewTurtle;
     private Button btnDeleteTurtle;
@@ -52,13 +52,13 @@ public class MainActivity extends Activity {
     private Button btnNewProcedure;
     private Button btnChooseProcedure;
     private Button btnIteration;
+    private Button btnPlayCommands;
     private SurfaceView srf;
-    private SurfaceHolder sth;
     private SwipeNumberPicker swipeNumberPicker;
     private Switch switchColor;
     private Turtle turtle;
-    Canvas canvas;
     ArrayList<Procedure> listOfProcedure = new ArrayList<Procedure>();
+    ArrayList<Commands> listOfCommands = new ArrayList<Commands>();
 
 
     //listView
@@ -76,7 +76,7 @@ public class MainActivity extends Activity {
     int selectedColorB;
     int selectedColorRGB;
 
-    Bitmap bg = Bitmap.createBitmap(960, 1600, Bitmap.Config.ARGB_8888);
+    Bitmap bg = Bitmap.createBitmap(850, 1600, Bitmap.Config.ARGB_8888);
     Canvas canvas2 = new Canvas(bg);
     LinearLayout ll;
 
@@ -85,7 +85,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //getSupportActionBar().hide();//skryje vrchní lištu
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR); //zabrání změnám orientace
         initComopnents();
 
@@ -94,7 +93,12 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-
+                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                paint.setStyle(Paint.Style.FILL);
+                paint.setStrokeWidth(3);
+                paint.setColor(Color.rgb(255,252,190));
+                canvas2.drawRect(0, 0, 960, 1600, paint);
+                ll.setBackgroundDrawable(new BitmapDrawable(bg));
                 turtle = null;
             }
         });
@@ -106,36 +110,14 @@ public class MainActivity extends Activity {
                 if(turtle != null){
 
                         int distance = seekBar.getProgress();
-                        int x = 0;
-                        int y = 0;
-
-                        x = turtle.getNewXForward(distance, turtle);
-                        y = turtle.getNewYForward(distance, turtle);
-                        if(switchColor.isChecked())
-                        {
-                            //... actual drawing on canvas
-                            Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
-                            paint.setStyle(Paint.Style.FILL);
-                            paint.setStrokeWidth(5);
-
-
-                            paint.setColor(turtle.getColor());
-                            canvas2.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
-                            ll.setBackgroundDrawable(new BitmapDrawable(bg));
-                            editText4.setText("X:" + x + "Y:" + y + "tX:" + turtle.getX() + "tY:" + turtle.getY());
-                        }
-
-                        turtle.setX(x);
-                        turtle.setY(y);
                         listAdapter.add("Vpřed " + distance);
                         listView.setAdapter(listAdapter);
-
-
-
-            }else
-            {
-                Toast.makeText(getApplicationContext(), "Nemáte vytvořenou želvu!", Toast.LENGTH_LONG).show();
-            }
+                        Commands f = new Commands(1,"Vpřed",distance);
+                        listOfCommands.add(f);
+                }else
+                {
+                    Toast.makeText(getApplicationContext(), "Nemáte vytvořenou želvu!", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -145,33 +127,11 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
 
                 if (turtle != null) {
-
-                    int x = 0;
-                    int y = 0;
                     int distance = seekBar2.getProgress();
-                    x = turtle.getNewXBackward(distance, turtle);
-                    y = turtle.getNewYBackward(distance, turtle);
-
-                    if (switchColor.isChecked()) {
-
-                        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                        paint.setStyle(Paint.Style.FILL);
-                        paint.setStrokeWidth(5);
-
-                        paint.setColor(turtle.getColor());
-
-                        canvas2.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
-                        ll.setBackgroundDrawable(new BitmapDrawable(bg));
-                        editText4.setText("X:" + x + "Y:" + y + "tX:" + turtle.getX() + "tY:" + turtle.getY());
-
-                    }
-                    turtle.setX(x);
-                    turtle.setY(y);
-
-
                     listAdapter.add("Vzad " + distance);
                     listView.setAdapter(listAdapter);
-
+                    Commands f = new Commands(2,"Vzad",distance);
+                    listOfCommands.add(f);
 
                 } else {
                     Toast.makeText(getApplicationContext(), "Nemáte vytvořenou želvu!", Toast.LENGTH_LONG).show();
@@ -188,21 +148,13 @@ public class MainActivity extends Activity {
                 turtle = new Turtle();
                 turtle.setX(480);
                 turtle.setY(800);
-
                 Toast.makeText(getApplicationContext(), "Vytvořili jste novou želvu!", Toast.LENGTH_LONG).show();
-
-
-                    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                    paint.setStyle(Paint.Style.FILL);
-                    paint.setStrokeWidth(3);
-                    paint.setColor(Color.rgb(255,252,190));
-                    canvas2.drawRect(0, 0, 960, 1600, paint);
-
-                    ll.setBackgroundDrawable(new BitmapDrawable(bg));
-
-
-
-
+                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                paint.setStyle(Paint.Style.FILL);
+                paint.setStrokeWidth(3);
+                paint.setColor(Color.rgb(255, 252, 190));
+                canvas2.drawRect(0, 0, 960, 1600, paint);
+                ll.setBackgroundDrawable(new BitmapDrawable(bg));
             }
         });
 
@@ -211,17 +163,13 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 final ColorPicker cp = new ColorPicker(MainActivity.this, defaultColorR, defaultColorG, defaultColorB);
-
                 cp.show();
-
-
                 /* On Click listener for the dialog, when the user select the color */
                 Button okColor = (Button) cp.findViewById(R.id.okColorButton);
 
                 okColor.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                  /* You can get single channel (value 0-255) */
                         selectedColorR = cp.getRed();
                         selectedColorG = cp.getGreen();
@@ -229,14 +177,13 @@ public class MainActivity extends Activity {
 
                         /* Or the android RGB Color (see the android Color class reference) */
                         selectedColorRGB = cp.getColor();
-
                         cp.dismiss();
-
                         if (turtle != null) {
-                            turtle.setColor(selectedColorRGB);
                             listAdapter.add("Nová barva ");
                             listView.setAdapter(listAdapter);
                             btnPickColour.setBackgroundColor(selectedColorRGB);
+                            Commands f = new Commands(4,"Změna barvy",selectedColorRGB);
+                            listOfCommands.add(f);
 
                         } else {
                             Toast.makeText(getApplicationContext(), "Nemáte vytvořenou želvu!", Toast.LENGTH_LONG).show();
@@ -255,25 +202,21 @@ public class MainActivity extends Activity {
                 tp.show();
 
                 Button btnProcedureSave = (Button) tp.findViewById(R.id.btnProcedureSave);
-
-
                 btnProcedureSave.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         String nameOfProcedure = tp.tbProcedureName.getText().toString();
                         boolean isOk = true;
-                        for (int i = 0;i < listOfProcedure.size();i++) {
+                        for (int i = 0; i < listOfProcedure.size(); i++) {
                             if (listOfProcedure.get(i).procedureName.equals(nameOfProcedure)) {
                                 isOk = false;
                             }
                         }
-                        if(isOk) {
-                            Procedure p1 = new Procedure(nameOfProcedure, tp.commands);
+                        if (isOk) {
+                            Procedure p1 = new Procedure(nameOfProcedure, tp.listOfCommands);
                             listOfProcedure.add(p1);
                             tp.dismiss();
-                        }
-                        else
-                        {
+                        } else {
                             Toast.makeText(getApplicationContext(), "Procedura s tímto názvem již existuje!", Toast.LENGTH_LONG).show();
                         }
 
@@ -302,22 +245,18 @@ public class MainActivity extends Activity {
                 chp.show();
 
                 Button btnProcedureChoose = (Button) chp.findViewById(R.id.btnProcedureChoose);
-
-
                 btnProcedureChoose.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
 
-                        //načtení procedury
-                        /*
-                        int item = chp.listViewChooseProcedure.getSelectedItemPosition();
-                        String s = chp.listViewChooseProcedure.getAdapter().getItem(item+2).toString();
-                        Toast.makeText(getApplicationContext(), "Vybral jsi " + s, Toast.LENGTH_LONG).show();
-                        */
+                        listAdapter.add(chp.chooseItem);
+                        listView.setAdapter(listAdapter);
+                        for (int i = 0; i < chp.chooseProcedure.commands.size(); i++)
+                        {
+                            listOfCommands.add(chp.chooseProcedure.commands.get(i));
+                        }
                         chp.dismiss();
-
-
                     }
                 });
                 Button btnProcedureChooseClose = (Button) chp.findViewById(R.id.btnProcedureChooseClose);
@@ -327,7 +266,6 @@ public class MainActivity extends Activity {
                     public void onClick(View v) {
 
                         chp.dismiss();
-
                     }
                 });
             }
@@ -337,10 +275,16 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                commandList.add(0,"Opakovat " + swipeNumberPicker.getValue());
+                commandList.add(0, "Opakovat " + swipeNumberPicker.getValue());
                 commandList.add(listAdapter.getCount(), "Konec opakování");
                 commandList.addAll(Arrays.asList(commands));
                 listView.setAdapter(listAdapter);
+                Commands c = new Commands(6,"Opakuj",swipeNumberPicker.getValue());
+                listOfCommands.add(0, c);
+                Commands c2 = new Commands(7,"konec Opakování");
+                listOfCommands.add(listOfCommands.size(),c2);
+
+
             }
 
         });
@@ -355,14 +299,191 @@ public class MainActivity extends Activity {
             }
 
         });
+        btnPlayCommands.setOnClickListener(new Button.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                int counterOfCommands = listOfCommands.size();
+                int x = 0;
+                int y = 0;
+
+                for (int i = 0; i< counterOfCommands;i++)
+                {
+                    int command = listOfCommands.get(i).getNumberOfCommand();
+
+                    switch (command) {
+
+                        case 1:
+
+
+                            x = turtle.getNewXForward(listOfCommands.get(i).getCommandDistance(), turtle);
+                            y = turtle.getNewYForward(listOfCommands.get(i).getCommandDistance(), turtle);
+                            if(turtle.isDraw())
+                            {
+                                //... actual drawing on canvas
+                                Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
+                                paint.setStyle(Paint.Style.FILL);
+                                paint.setStrokeWidth(5);
+                                paint.setColor(turtle.getColor());
+                                canvas2.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                                ll.setBackgroundDrawable(new BitmapDrawable(bg));
+                            }
+
+                            turtle.setX(x);
+                            turtle.setY(y);
+
+                            break;
+                        case 2:
+
+
+                            x = turtle.getNewXBackward(listOfCommands.get(i).getCommandDistance(), turtle);
+                            y = turtle.getNewYBackward(listOfCommands.get(i).getCommandDistance(), turtle);
+
+                            if (turtle.isDraw()) {
+
+                                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                                paint.setStyle(Paint.Style.FILL);
+                                paint.setStrokeWidth(5);
+                                paint.setColor(turtle.getColor());
+                                canvas2.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                                ll.setBackgroundDrawable(new BitmapDrawable(bg));
+
+                            }
+                            turtle.setX(x);
+                            turtle.setY(y);
+
+                            break;
+                        case 3:
+                            turtle.setAngle(listOfCommands.get(i).getCommandDistance());
+
+                            break;
+                        case 4:
+
+                            turtle.setColor(listOfCommands.get(i).getCommandDistance());
+
+                            break;
+                        case 5:
+
+                            if(listOfCommands.get(i).getCommandDistance()==1)
+                            {
+                                turtle.setDraw(true);
+                            }else
+                            {
+                                turtle.setDraw(false);
+                            }
+
+                            break;
+                        case 6:
+                            int storage = i;
+                            int iterator = listOfCommands.get(i).getCommandDistance();
+
+
+                            for(int g =  0;g <= iterator;)
+                            {
+                                i++;
+                                if (listOfCommands.get(i).getNumberOfCommand() == 7)
+                                {
+
+                                    g++;
+                                    i=storage;
+
+                                }
+
+                                command = listOfCommands.get(i).getNumberOfCommand();
+                                switch (command) {
+
+                                    case 1:
+
+
+                                        x = turtle.getNewXForward(listOfCommands.get(i).getCommandDistance(), turtle);
+                                        y = turtle.getNewYForward(listOfCommands.get(i).getCommandDistance(), turtle);
+                                        if (turtle.isDraw()) {
+                                            //... actual drawing on canvas
+                                            Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
+                                            paint.setStyle(Paint.Style.FILL);
+                                            paint.setStrokeWidth(5);
+                                            paint.setColor(turtle.getColor());
+                                            canvas2.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                                            ll.setBackgroundDrawable(new BitmapDrawable(bg));
+                                        }
+
+                                        turtle.setX(x);
+                                        turtle.setY(y);
+
+                                        break;
+                                    case 2:
+
+
+                                        x = turtle.getNewXBackward(listOfCommands.get(i).getCommandDistance(), turtle);
+                                        y = turtle.getNewYBackward(listOfCommands.get(i).getCommandDistance(), turtle);
+
+                                        if (turtle.isDraw()) {
+
+                                            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                                            paint.setStyle(Paint.Style.FILL);
+                                            paint.setStrokeWidth(5);
+                                            paint.setColor(turtle.getColor());
+                                            canvas2.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                                            ll.setBackgroundDrawable(new BitmapDrawable(bg));
+
+                                        }
+                                        turtle.setX(x);
+                                        turtle.setY(y);
+
+                                        break;
+                                    case 3:
+                                        turtle.setAngle(listOfCommands.get(i).getCommandDistance());
+
+                                        break;
+                                    case 4:
+
+                                        turtle.setColor(listOfCommands.get(i).getCommandDistance());
+
+                                        break;
+                                    case 5:
+
+                                        if (listOfCommands.get(i).getCommandDistance() == 1) {
+                                            turtle.setDraw(true);
+                                        } else {
+                                            turtle.setDraw(false);
+                                        }
+
+                                        break;
+
+                                }
+
+
+                            }
+
+
+
+                            break;
+
+                        default:
+
+                            break;
+                    }
+
+
+
+
+                }
+
+
+            }
+
+        });
+
+
+
+
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progress = 0;
-
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
                 editText.setText("" + seekBar.getProgress());
-
             }
 
             @Override
@@ -417,9 +538,10 @@ public class MainActivity extends Activity {
             public void onStopTrackingTouch(SeekArc seekArc) {
                 seekArcProgress.setText("" + seekArc.getProgress());
                 if (turtle != null) {
-                    turtle.setAngle(seekArc.getProgress());
                     listAdapter.add("Otočit " + seekArc.getProgress());
                     listView.setAdapter(listAdapter);
+                    Commands c = new Commands(3,"Otočit",seekArc.getProgress());
+                    listOfCommands.add(c);
                 }
             }
         });
@@ -452,12 +574,16 @@ public class MainActivity extends Activity {
                     if (turtle != null) {
                         listAdapter.add("Kreslení zapnuto");
                         listView.setAdapter(listAdapter);
+                        Commands c = new Commands(5,"Kresleni",1);
+                        listOfCommands.add(c);
                     }
 
                 } else {
                     if (turtle != null) {
                         listAdapter.add("Kreslení vypnuto");
                         listView.setAdapter(listAdapter);
+                        Commands c = new Commands(5,"Kresleni",0);
+                        listOfCommands.add(c);
                     }
                 }
 
@@ -493,7 +619,6 @@ public class MainActivity extends Activity {
         editText.setKeyListener(null);
         editText2 = (EditText) findViewById(R.id.editText2);
         editText2.setKeyListener(null);
-        editText4 = (EditText) findViewById(R.id.editText4);
         seekArcProgress = (TextView) findViewById(R.id.seekArcProgress);
         seekArcProgress.setKeyListener(null);
 
@@ -507,13 +632,13 @@ public class MainActivity extends Activity {
         btnPickColour = (Button) findViewById(R.id.button9);
         btnNewProcedure = (Button) findViewById(R.id.button3);
         btnChooseProcedure = (Button) findViewById(R.id.btnChooseProcedure);
+        btnPlayCommands = (Button) findViewById(R.id.btnPlayCommands);
 
         //Ostatní
         ll = (LinearLayout) findViewById(R.id.rect);
         swipeNumberPicker = (SwipeNumberPicker) findViewById(R.id.number_picker);
         switchColor =  (Switch) findViewById(R.id.switch1);
         srf = (SurfaceView) findViewById(R.id.surfaceView);
-        sth = srf.getHolder();
 
         //Listview
         listView = (ListView) findViewById(R.id.listView);
@@ -522,10 +647,16 @@ public class MainActivity extends Activity {
         listView.setAdapter( listAdapter );
 
         //listOfProceduer
-        Procedure čtverec = new Procedure("Čtverec", new String[]{"Vpřed 50", "Otoč 90", "Vpřed 50"});
-        Procedure trojuhlenik = new Procedure("trojuhelnik", new String[]{"Vpřed 50", "Otoč 90", "Vpřed 50"});
+        ArrayList<Commands> listCtverec = new ArrayList<Commands>();
+        listCtverec.add(new Commands(1,"Vpřed",50));
+        listCtverec.add(new Commands(3,"Otoč",270));
+        listCtverec.add(new Commands(1,"Vpřed",50));
+        listCtverec.add(new Commands(3,"Otoč",180));
+        listCtverec.add(new Commands(1,"Vpřed",50));
+        listCtverec.add(new Commands(3,"Otoč",90));
+        listCtverec.add(new Commands(1,"Vpřed",50));
+        Procedure čtverec = new Procedure("Čtverec", listCtverec);
         listOfProcedure.add(čtverec);
-        listOfProcedure.add(trojuhlenik);
 
 
     }

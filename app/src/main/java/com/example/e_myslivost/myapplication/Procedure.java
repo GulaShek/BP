@@ -1,25 +1,27 @@
 package com.example.e_myslivost.myapplication;
 
+import java.util.ArrayList;
+
 /**
  * Created by e-myslivost on 26.2.2016.
  */
 public class Procedure
 {
     String procedureName;
-    String[] procedure;
+    ArrayList<Commands> commands;
 
-    public Procedure(String procedureName,String[] procedure)
+    public Procedure(String procedureName,ArrayList<Commands> commands)
     {
-        this.procedure = procedure;
+        this.commands = commands;
         this.procedureName = procedureName;
     }
 
-    public String[] getProcedure() {
-        return procedure;
+    public ArrayList<Commands> getCommands() {
+        return commands;
     }
 
-    public void setProcedure(String[] procedure) {
-        this.procedure = procedure;
+    public void setCommands(ArrayList<Commands> commands) {
+        this.commands = commands;
     }
 
     public String getProcedureName() {

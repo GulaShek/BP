@@ -202,8 +202,5 @@ public class Turtle {
 
         return newY;
     }
-    public void turn(int angle)
-    {
 
-    }
 }
