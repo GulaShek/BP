@@ -300,11 +300,17 @@ public class CreateProcedure extends Dialog
 
         //Buttny
         btnProcedureBackward= (Button) findViewById(R.id.btnProceureBackward);
+        btnProcedureBackward.setBackgroundResource(R.drawable.button_selector);
         btnProcedureForward = (Button) findViewById(R.id.btnProcedureForward);
+        btnProcedureForward.setBackgroundResource(R.drawable.button_selector);
         btnProcedureClose = (Button) findViewById(R.id.btnProcedureClose);
+        btnProcedureClose.setBackgroundResource(R.drawable.button_selector);
         btnProcedureIteration = (Button) findViewById(R.id.btnProcedureIteration);
+        btnProcedureIteration.setBackgroundResource(R.drawable.button_selector);
         btnProcedurePickColour = (Button) findViewById(R.id.btnProcedurePickColor);
+        btnProcedurePickColour.setBackgroundResource(R.drawable.button_selector);
         btnProcedureSave = (Button) findViewById(R.id.btnProcedureSave);
+        btnProcedureSave.setBackgroundResource(R.drawable.button_selector);
 
 
         //Ostatní

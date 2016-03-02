@@ -1,20 +1,19 @@
 package com.example.e_myslivost.myapplication;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SeekBar;
@@ -43,17 +42,19 @@ public class MainActivity extends Activity {
     private EditText editText;
     private EditText editText2;
     private TextView seekArcProgress;
+    private TextView twUhel;
+    private TextView twX;
+    private TextView twY;
     private Button btnNewTurtle;
     private Button btnDeleteTurtle;
     private Button btnForward;
     private Button btnBackward;
-    private Button btnClouseApp;
+    private Button btnDeleteCommands;
     private Button btnPickColour;
     private Button btnNewProcedure;
     private Button btnChooseProcedure;
     private Button btnIteration;
     private Button btnPlayCommands;
-    private SurfaceView srf;
     private SwipeNumberPicker swipeNumberPicker;
     private Switch switchColor;
     private Turtle turtle;
@@ -76,9 +77,13 @@ public class MainActivity extends Activity {
     int selectedColorB;
     int selectedColorRGB;
 
-    Bitmap bg = Bitmap.createBitmap(850, 1600, Bitmap.Config.ARGB_8888);
-    Canvas canvas2 = new Canvas(bg);
+
     LinearLayout ll;
+    Canvas canvas;
+    public ImageView drawingImageView;
+
+
+
 
 
     @Override
@@ -87,6 +92,16 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR); //zabrání změnám orientace
         initComopnents();
+        drawingImageView = (ImageView) this.findViewById(R.id.rect2);
+       /* final Bitmap bitmap = Bitmap.createBitmap((int) getWindowManager()
+                .getDefaultDisplay().getWidth(), (int) getWindowManager()
+                .getDefaultDisplay().getHeight(), Bitmap.Config.ARGB_8888);*/
+        final Bitmap bitmap = Bitmap.createBitmap(2000, 1000, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(bitmap);
+        drawingImageView.setImageBitmap(bitmap);
+
+
+
 
 
         btnDeleteTurtle.setOnClickListener(new Button.OnClickListener() {
@@ -96,9 +111,10 @@ public class MainActivity extends Activity {
                 Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
                 paint.setStyle(Paint.Style.FILL);
                 paint.setStrokeWidth(3);
-                paint.setColor(Color.rgb(255,252,190));
-                canvas2.drawRect(0, 0, 960, 1600, paint);
-                ll.setBackgroundDrawable(new BitmapDrawable(bg));
+                paint.setColor(Color.rgb(255, 252, 190));
+                canvas.drawColor(0, PorterDuff.Mode.CLEAR);
+                drawingImageView.invalidate();
+
                 turtle = null;
             }
         });
@@ -145,16 +161,22 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
+
+
                 turtle = new Turtle();
-                turtle.setX(480);
-                turtle.setY(800);
+                turtle.setX(getWindowManager().getDefaultDisplay().getWidth() / 2);
+                turtle.setY(getWindowManager().getDefaultDisplay().getHeight() / 2);
                 Toast.makeText(getApplicationContext(), "Vytvořili jste novou želvu!", Toast.LENGTH_LONG).show();
                 Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
                 paint.setStyle(Paint.Style.FILL);
                 paint.setStrokeWidth(3);
                 paint.setColor(Color.rgb(255, 252, 190));
-                canvas2.drawRect(0, 0, 960, 1600, paint);
-                ll.setBackgroundDrawable(new BitmapDrawable(bg));
+
+                twX.setText(turtle.getX() + "");
+                twY.setText(turtle.getY() + "");
+
+                drawingImageView.setBackgroundColor(Color.rgb(255,251,181));
+                drawingImageView.invalidate();
             }
         });
 
@@ -166,7 +188,7 @@ public class MainActivity extends Activity {
                 cp.show();
                 /* On Click listener for the dialog, when the user select the color */
                 Button okColor = (Button) cp.findViewById(R.id.okColorButton);
-
+                okColor.setBackgroundResource(R.drawable.button_selector);
                 okColor.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -182,7 +204,7 @@ public class MainActivity extends Activity {
                             listAdapter.add("Nová barva ");
                             listView.setAdapter(listAdapter);
                             btnPickColour.setBackgroundColor(selectedColorRGB);
-                            Commands f = new Commands(4,"Změna barvy",selectedColorRGB);
+                            Commands f = new Commands(4, "Změna barvy", selectedColorRGB);
                             listOfCommands.add(f);
 
                         } else {
@@ -244,6 +266,7 @@ public class MainActivity extends Activity {
 
                 chp.show();
 
+
                 Button btnProcedureChoose = (Button) chp.findViewById(R.id.btnProcedureChoose);
                 btnProcedureChoose.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -282,20 +305,20 @@ public class MainActivity extends Activity {
                 Commands c = new Commands(6,"Opakuj",swipeNumberPicker.getValue());
                 listOfCommands.add(0, c);
                 Commands c2 = new Commands(7,"konec Opakování");
-                listOfCommands.add(listOfCommands.size(),c2);
+                listOfCommands.add(listOfCommands.size(), c2);
 
 
             }
 
         });
-        btnClouseApp.setOnClickListener(new Button.OnClickListener() {
+        btnDeleteCommands.setOnClickListener(new Button.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_HOME);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                commandList.clear();
+                commandList.addAll(Arrays.asList(commands));
+                listView.setAdapter(listAdapter);
+                listOfCommands.clear();
             }
 
         });
@@ -307,169 +330,189 @@ public class MainActivity extends Activity {
                 int counterOfCommands = listOfCommands.size();
                 int x = 0;
                 int y = 0;
+                if(turtle != null) {
 
-                for (int i = 0; i< counterOfCommands;i++)
-                {
-                    int command = listOfCommands.get(i).getNumberOfCommand();
+                if(counterOfCommands != 0) {
+                    for (int i = 0; i < counterOfCommands; i++) {
+                        int command = listOfCommands.get(i).getNumberOfCommand();
 
-                    switch (command) {
+                        switch (command) {
 
-                        case 1:
-
-
-                            x = turtle.getNewXForward(listOfCommands.get(i).getCommandDistance(), turtle);
-                            y = turtle.getNewYForward(listOfCommands.get(i).getCommandDistance(), turtle);
-                            if(turtle.isDraw())
-                            {
-                                //... actual drawing on canvas
-                                Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
-                                paint.setStyle(Paint.Style.FILL);
-                                paint.setStrokeWidth(5);
-                                paint.setColor(turtle.getColor());
-                                canvas2.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
-                                ll.setBackgroundDrawable(new BitmapDrawable(bg));
-                            }
-
-                            turtle.setX(x);
-                            turtle.setY(y);
-
-                            break;
-                        case 2:
+                            case 1:
 
 
-                            x = turtle.getNewXBackward(listOfCommands.get(i).getCommandDistance(), turtle);
-                            y = turtle.getNewYBackward(listOfCommands.get(i).getCommandDistance(), turtle);
+                                x = turtle.getNewXForward(listOfCommands.get(i).getCommandDistance(), turtle);
+                                y = turtle.getNewYForward(listOfCommands.get(i).getCommandDistance(), turtle);
+                                if (turtle.isDraw()) {
+                                    Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
+                                    paint.setStyle(Paint.Style.FILL);
+                                    paint.setStrokeWidth(5);
+                                    paint.setColor(turtle.getColor());
+                                    canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                                    drawingImageView.invalidate();
+                                }
 
-                            if (turtle.isDraw()) {
-
-                                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                                paint.setStyle(Paint.Style.FILL);
-                                paint.setStrokeWidth(5);
-                                paint.setColor(turtle.getColor());
-                                canvas2.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
-                                ll.setBackgroundDrawable(new BitmapDrawable(bg));
-
-                            }
-                            turtle.setX(x);
-                            turtle.setY(y);
-
-                            break;
-                        case 3:
-                            turtle.setAngle(listOfCommands.get(i).getCommandDistance());
-
-                            break;
-                        case 4:
-
-                            turtle.setColor(listOfCommands.get(i).getCommandDistance());
-
-                            break;
-                        case 5:
-
-                            if(listOfCommands.get(i).getCommandDistance()==1)
-                            {
-                                turtle.setDraw(true);
-                            }else
-                            {
-                                turtle.setDraw(false);
-                            }
-
-                            break;
-                        case 6:
-                            int storage = i;
-                            int iterator = listOfCommands.get(i).getCommandDistance();
+                                turtle.setX(x);
+                                turtle.setY(y);
+                                twX.setText(x + "");
+                                twY.setText(y +"");
+                                break;
+                            case 2:
 
 
-                            for(int g =  0;g <= iterator;)
-                            {
-                                i++;
-                                if (listOfCommands.get(i).getNumberOfCommand() == 7)
+                                x = turtle.getNewXBackward(listOfCommands.get(i).getCommandDistance(), turtle);
+                                y = turtle.getNewYBackward(listOfCommands.get(i).getCommandDistance(), turtle);
+
+                                if (turtle.isDraw()) {
+
+                                    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                                    paint.setStyle(Paint.Style.FILL);
+                                    paint.setStrokeWidth(5);
+                                    paint.setColor(turtle.getColor());
+                                    canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                                    drawingImageView.invalidate();
+                                }
+                                turtle.setX(x);
+                                turtle.setY(y);
+                                twX.setText(x + "");
+                                twY.setText(y + "");
+
+                                break;
+                            case 3:
+                                turtle.setAngle(listOfCommands.get(i).getCommandDistance());
+                                twUhel.setText(turtle.getAngle() + "°");
+
+                                break;
+                            case 4:
+
+                                turtle.setColor(listOfCommands.get(i).getCommandDistance());
+
+                                break;
+                            case 5:
+
+                                if (listOfCommands.get(i).getCommandDistance() == 1) {
+                                    turtle.setDraw(true);
+                                } else {
+                                    turtle.setDraw(false);
+                                }
+
+                                break;
+                            case 6:
+                                int storage = i;
+                                int iterator = listOfCommands.get(i).getCommandDistance();
+
+
+                                for (int g = 0; g <= iterator; ) {
+                                    i++;
+                                    if (listOfCommands.get(i).getNumberOfCommand() == 7) {
+
+                                        g++;
+                                        i = storage;
+
+                                    }
+
+                                    command = listOfCommands.get(i).getNumberOfCommand();
+                                    switch (command) {
+
+                                        case 1:
+
+
+                                            x = turtle.getNewXForward(listOfCommands.get(i).getCommandDistance(), turtle);
+                                            y = turtle.getNewYForward(listOfCommands.get(i).getCommandDistance(), turtle);
+                                            if (turtle.isDraw()) {
+                                                Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
+                                                paint.setStyle(Paint.Style.FILL);
+                                                paint.setStrokeWidth(5);
+                                                paint.setColor(turtle.getColor());
+                                                canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                                                drawingImageView.invalidate();
+                                            }
+
+                                            turtle.setX(x);
+                                            turtle.setY(y);
+                                            twX.setText(x + "");
+                                            twY.setText(y + "");
+
+                                            break;
+                                        case 2:
+
+
+                                            x = turtle.getNewXBackward(listOfCommands.get(i).getCommandDistance(), turtle);
+                                            y = turtle.getNewYBackward(listOfCommands.get(i).getCommandDistance(), turtle);
+
+                                            if (turtle.isDraw()) {
+
+                                                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                                                paint.setStyle(Paint.Style.FILL);
+                                                paint.setStrokeWidth(5);
+                                                paint.setColor(turtle.getColor());
+                                                canvas.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
+                                                drawingImageView.invalidate();
+
+                                            }
+                                            turtle.setX(x);
+                                            turtle.setY(y);
+                                            twX.setText(x + "");
+                                            twY.setText(y + "");
+
+                                            break;
+                                        case 3:
+                                            turtle.setAngle(listOfCommands.get(i).getCommandDistance());
+                                            twUhel.setText(turtle.getAngle() + "°");
+
+                                            break;
+                                        case 4:
+
+                                            turtle.setColor(listOfCommands.get(i).getCommandDistance());
+
+                                            break;
+                                        case 5:
+
+                                            if (listOfCommands.get(i).getCommandDistance() == 1) {
+                                                turtle.setDraw(true);
+                                            } else {
+                                                turtle.setDraw(false);
+                                            }
+
+                                            break;
+
+                                    }
+
+
+                                }
+
+
+                                break;
+                            case 8:
+
+                                if(turtle.getAngle() + listOfCommands.get(i).getCommandDistance() < 360)
                                 {
-
-                                    g++;
-                                    i=storage;
-
+                                    turtle.setAngle(turtle.getAngle() + listOfCommands.get(i).getCommandDistance());
+                                }else
+                                {
+                                    int a = turtle.getAngle() + listOfCommands.get(i).getCommandDistance();
+                                    turtle.setAngle(a%360);
                                 }
 
-                                command = listOfCommands.get(i).getNumberOfCommand();
-                                switch (command) {
+                                turtle.setAngle(turtle.getAngle());
 
-                                    case 1:
+                                break;
 
+                            default:
 
-                                        x = turtle.getNewXForward(listOfCommands.get(i).getCommandDistance(), turtle);
-                                        y = turtle.getNewYForward(listOfCommands.get(i).getCommandDistance(), turtle);
-                                        if (turtle.isDraw()) {
-                                            //... actual drawing on canvas
-                                            Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
-                                            paint.setStyle(Paint.Style.FILL);
-                                            paint.setStrokeWidth(5);
-                                            paint.setColor(turtle.getColor());
-                                            canvas2.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
-                                            ll.setBackgroundDrawable(new BitmapDrawable(bg));
-                                        }
-
-                                        turtle.setX(x);
-                                        turtle.setY(y);
-
-                                        break;
-                                    case 2:
+                                break;
+                        }
 
 
-                                        x = turtle.getNewXBackward(listOfCommands.get(i).getCommandDistance(), turtle);
-                                        y = turtle.getNewYBackward(listOfCommands.get(i).getCommandDistance(), turtle);
-
-                                        if (turtle.isDraw()) {
-
-                                            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                                            paint.setStyle(Paint.Style.FILL);
-                                            paint.setStrokeWidth(5);
-                                            paint.setColor(turtle.getColor());
-                                            canvas2.drawLine(turtle.getX(), turtle.getY(), x, y, paint);
-                                            ll.setBackgroundDrawable(new BitmapDrawable(bg));
-
-                                        }
-                                        turtle.setX(x);
-                                        turtle.setY(y);
-
-                                        break;
-                                    case 3:
-                                        turtle.setAngle(listOfCommands.get(i).getCommandDistance());
-
-                                        break;
-                                    case 4:
-
-                                        turtle.setColor(listOfCommands.get(i).getCommandDistance());
-
-                                        break;
-                                    case 5:
-
-                                        if (listOfCommands.get(i).getCommandDistance() == 1) {
-                                            turtle.setDraw(true);
-                                        } else {
-                                            turtle.setDraw(false);
-                                        }
-
-                                        break;
-
-                                }
-
-
-                            }
-
-
-
-                            break;
-
-                        default:
-
-                            break;
                     }
-
-
-
-
+                }else
+                {
+                    Toast.makeText(getApplicationContext(), "Nemáte vytvořený žádný příkaz!", Toast.LENGTH_LONG).show();
                 }
-
+                }else
+                {
+                    Toast.makeText(getApplicationContext(), "Nemáte vytvořenou želvu!", Toast.LENGTH_LONG).show();
+                }
 
             }
 
@@ -540,7 +583,7 @@ public class MainActivity extends Activity {
                 if (turtle != null) {
                     listAdapter.add("Otočit " + seekArc.getProgress());
                     listView.setAdapter(listAdapter);
-                    Commands c = new Commands(3,"Otočit",seekArc.getProgress());
+                    Commands c = new Commands(3, "Otočit", seekArc.getProgress());
                     listOfCommands.add(c);
                 }
             }
@@ -574,7 +617,7 @@ public class MainActivity extends Activity {
                     if (turtle != null) {
                         listAdapter.add("Kreslení zapnuto");
                         listView.setAdapter(listAdapter);
-                        Commands c = new Commands(5,"Kresleni",1);
+                        Commands c = new Commands(5, "Kresleni", 1);
                         listOfCommands.add(c);
                     }
 
@@ -582,7 +625,7 @@ public class MainActivity extends Activity {
                     if (turtle != null) {
                         listAdapter.add("Kreslení vypnuto");
                         listView.setAdapter(listAdapter);
-                        Commands c = new Commands(5,"Kresleni",0);
+                        Commands c = new Commands(5, "Kresleni", 0);
                         listOfCommands.add(c);
                     }
                 }
@@ -590,14 +633,24 @@ public class MainActivity extends Activity {
             }
         });
 
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
+            @Override
+            public boolean onItemLongClick(final AdapterView<?> arg0, View arg1,
+                                           final int position, long arg3) {
+                //nove
+                listAdapter = (ArrayAdapter) arg0.getAdapter();
+                listAdapter.remove(listAdapter.getItem(position));
+                listAdapter.notifyDataSetChanged();
+                listOfCommands.remove(position);
+                //konec
+                return false;
 
-
+            }
+        });
 
 
     }
-
-
 
 
     public void clouseAPP()
@@ -621,24 +674,35 @@ public class MainActivity extends Activity {
         editText2.setKeyListener(null);
         seekArcProgress = (TextView) findViewById(R.id.seekArcProgress);
         seekArcProgress.setKeyListener(null);
+        twUhel = (TextView) findViewById(R.id.twUhel);
+        twX = (TextView) findViewById(R.id.twX);
+        twY = (TextView) findViewById(R.id.twY);
 
         //Buttny
         btnNewTurtle = (Button) findViewById(R.id.button);
+        btnNewTurtle.setBackgroundResource(R.drawable.button_selector);
         btnForward = (Button) findViewById(R.id.button5);
+        btnForward.setBackgroundResource(R.drawable.button_selector);
         btnDeleteTurtle = (Button) findViewById(R.id.button2);
-        btnClouseApp = (Button) findViewById(R.id.button8);
+        btnDeleteTurtle.setBackgroundResource(R.drawable.button_selector);
+        btnDeleteCommands = (Button) findViewById(R.id.button8);
+        btnDeleteCommands.setBackgroundResource(R.drawable.button_selector);
         btnBackward = (Button) findViewById(R.id.button4);
+        btnBackward.setBackgroundResource(R.drawable.button_selector);
         btnIteration = (Button) findViewById(R.id.button7);
+        btnIteration.setBackgroundResource(R.drawable.button_selector);
         btnPickColour = (Button) findViewById(R.id.button9);
+        btnPickColour.setBackgroundResource(R.drawable.button_selector);
         btnNewProcedure = (Button) findViewById(R.id.button3);
+        btnNewProcedure.setBackgroundResource(R.drawable.button_selector);
         btnChooseProcedure = (Button) findViewById(R.id.btnChooseProcedure);
+        btnChooseProcedure.setBackgroundResource(R.drawable.button_selector);
         btnPlayCommands = (Button) findViewById(R.id.btnPlayCommands);
+        btnPlayCommands.setBackgroundResource(R.drawable.button_play_selector);
 
         //Ostatní
-        ll = (LinearLayout) findViewById(R.id.rect);
         swipeNumberPicker = (SwipeNumberPicker) findViewById(R.id.number_picker);
         switchColor =  (Switch) findViewById(R.id.switch1);
-        srf = (SurfaceView) findViewById(R.id.surfaceView);
 
         //Listview
         listView = (ListView) findViewById(R.id.listView);
@@ -648,6 +712,7 @@ public class MainActivity extends Activity {
 
         //listOfProceduer
         ArrayList<Commands> listCtverec = new ArrayList<Commands>();
+        listCtverec.add(new Commands(3,"Otoč",0));
         listCtverec.add(new Commands(1,"Vpřed",50));
         listCtverec.add(new Commands(3,"Otoč",270));
         listCtverec.add(new Commands(1,"Vpřed",50));
@@ -655,8 +720,26 @@ public class MainActivity extends Activity {
         listCtverec.add(new Commands(1,"Vpřed",50));
         listCtverec.add(new Commands(3,"Otoč",90));
         listCtverec.add(new Commands(1,"Vpřed",50));
-        Procedure čtverec = new Procedure("Čtverec", listCtverec);
-        listOfProcedure.add(čtverec);
+        Procedure ctverec = new Procedure("Čtverec", listCtverec);
+        ArrayList<Commands> listTrojuhlenik = new ArrayList<Commands>();
+        listTrojuhlenik.add(new Commands(3,"Otoč",0));
+        listTrojuhlenik.add(new Commands(1,"Vpřed",50));
+        listTrojuhlenik.add(new Commands(3,"Otoč",225));
+        listTrojuhlenik.add(new Commands(1,"Vpřed",50));
+        listTrojuhlenik.add(new Commands(3,"Otoč",135));
+        listTrojuhlenik.add(new Commands(1,"Vpřed",50));
+        listTrojuhlenik.add(new Commands(3,"Otoč",0));
+        listTrojuhlenik.add(new Commands(1,"Vpřed",50));
+        Procedure trojuhleni = new Procedure("Trojuhlenik", listTrojuhlenik);
+        ArrayList<Commands> listKolecko = new ArrayList<Commands>();
+        for(int i = 0; i < 180; i++) {
+            listKolecko.add(new Commands(1, "Vpřed", 2));
+            listKolecko.add(new Commands(8, "Otoč", 2));
+        }
+        Procedure kolecko = new Procedure("Kolecko", listKolecko);
+        listOfProcedure.add(ctverec);
+        listOfProcedure.add(trojuhleni);
+        listOfProcedure.add(kolecko);
 
 
     }
