@@ -87,7 +87,7 @@
                         <Button
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:text="Vytvořit procedůru"
+                            android:text="Vytvořit proceduru"
                             android:id="@+id/button3"
                             android:background="@drawable/buttonshape"
                             android:shadowColor="#A8A8A8"
@@ -185,9 +185,20 @@
                         android:layout_marginBottom="150dp"
                         android:layout_marginLeft="20dp"
                         android:layout_alignParentEnd="false"
-                        android:background="#fffbb5"
-                        android:layout_marginRight="20dp" />
+                        android:layout_marginRight="20dp"
+                        android:adjustViewBounds="false"
+                        android:background="#fffbb5" />
 
+
+                    <ImageView
+                        android:id="@+id/viewForTurtle"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_marginBottom="150dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_alignParentEnd="false"
+                        android:layout_marginRight="20dp"
+                        android:longClickable="false" />
 
                     <LinearLayout
                         android:orientation="horizontal"
@@ -392,91 +403,91 @@
 
                         </LinearLayout>
 
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="top|center_vertical|center_horizontal"
-                        android:layout_marginRight="10dp"
-                        android:layout_gravity="top">
-
-                        <Button
+                        <LinearLayout
+                            android:orientation="vertical"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Vyber barvu"
-                            android:id="@+id/button9"
-                            android:layout_gravity="top"
-                            android:background="@drawable/buttonshape"
-                            android:shadowColor="#A8A8A8"
-                            android:shadowDx="0"
-                            android:shadowDy="0"
-                            android:shadowRadius="5"
-                            android:layout_margin="2dp"
-                            />
-                        <TextView
-                            android:id="@+id/commandLayout"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="Kreslení ON/OFF"
-                            android:textSize="10sp"
-                            android:layout_alignParentTop="true"
-                            android:layout_centerInParent="true"
-                            android:layout_marginTop="6dp"
-                            />
-
-                        <Switch
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/switch1"
-                            android:allowUndo="false"
-                            android:checked="true"
-                            android:nestedScrollingEnabled="false"
-                            android:singleLine="false"
-                            android:splitTrack="false"
-                            android:showText="false"
-                             />
-
-                        <TableRow
-                            android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_gravity="bottom|center">
+                            android:gravity="top|center_vertical|center_horizontal"
+                            android:layout_marginRight="10dp"
+                            android:layout_gravity="top">
 
-                            <TextView
+                            <Button
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="X:"
-                                android:id="@+id/twXinfo"
-                                android:layout_gravity="bottom"
-                                android:layout_marginLeft="3dp" />
-
+                                android:text="Vyber barvu"
+                                android:id="@+id/button9"
+                                android:layout_gravity="top"
+                                android:background="@drawable/buttonshape"
+                                android:shadowColor="#A8A8A8"
+                                android:shadowDx="0"
+                                android:shadowDy="0"
+                                android:shadowRadius="5"
+                                android:layout_margin="2dp"
+                                />
                             <TextView
+                                android:id="@+id/commandLayout"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="1000"
-                                android:id="@+id/twX"
-                                android:layout_gravity="bottom"
-                                android:layout_marginLeft="2dp" />
+                                android:layout_gravity="center"
+                                android:text="Kreslení ON/OFF"
+                                android:textSize="10sp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerInParent="true"
+                                android:layout_marginTop="6dp"
+                                />
 
-                            <TextView
+                            <Switch
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Y:"
-                                android:id="@+id/twYinfo"
-                                android:layout_marginLeft="3dp"
-                                android:layout_gravity="bottom" />
+                                android:id="@+id/switch1"
+                                android:allowUndo="false"
+                                android:checked="true"
+                                android:nestedScrollingEnabled="false"
+                                android:singleLine="false"
+                                android:splitTrack="false"
+                                android:showText="false"
+                                />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="100"
-                                android:id="@+id/twY"
-                                android:layout_gravity="bottom"
-                                android:layout_marginLeft="2dp" />
-                        </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="bottom|center">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="X:"
+                                    android:id="@+id/twXinfo"
+                                    android:layout_gravity="bottom"
+                                    android:layout_marginLeft="3dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:id="@+id/twX"
+                                    android:layout_gravity="bottom"
+                                    android:layout_marginLeft="2dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Y:"
+                                    android:id="@+id/twYinfo"
+                                    android:layout_marginLeft="3dp"
+                                    android:layout_gravity="bottom" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:id="@+id/twY"
+                                    android:layout_gravity="bottom"
+                                    android:layout_marginLeft="2dp" />
+                            </TableRow>
 
 
-                    </LinearLayout>
+                        </LinearLayout>
 
 
                     </LinearLayout>
